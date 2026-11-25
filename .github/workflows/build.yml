@@ -1,0 +1,40 @@
+name: Build Ashraful AI APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '*.zip'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Extract project
+        run: |
+          unzip Ashraful_AI_Autopilot_Android_Starter.zip
+
+      - name: Build APK
+        run: |
+          gradle -p AshrafulAIAutopilot assembleDebug
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Ashraful-AI-Autopilot-APK
+          path: AshrafulAIAutopilot/app/build/outputs/apk/debug/app-debug.apk
